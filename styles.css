@@ -1,0 +1,4 @@
+table td.price {
+  white-space: nowrap;
+  text-align: right;
+}
