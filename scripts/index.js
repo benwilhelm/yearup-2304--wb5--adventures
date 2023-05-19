@@ -1,3 +1,15 @@
+/**
+ * This solution pulls the individual steps of clearing and
+ * loading the table rows into reusable functions, then uses
+ * those functions to create a function called loadTableRows.
+ *
+ * By creating that reusable function, we can call it in multiple
+ * cases. First, we can use it on the initial page load (line 133)
+ * to load all of the activities into the table, then we can
+ * also use it in the change handler to load only the selected
+ * activities.
+ */
+
 'use strict';
 
 let categories = ['Adventures', 'Arts & Crafts', 'Museums', 'Wine Tastings', 'Other'];
@@ -117,38 +129,57 @@ const selectEl = document.getElementById('categorySelector');
 const actTable = document.getElementById('activitiesTable');
 
 categories.forEach((category) => {
-  const optionEl = new Option(category);
+  const optionEl = new Option(category, category);
   selectEl.appendChild(optionEl);
 });
 
-selectEl.addEventListener('change', () => {
-  // clear existing rows in table body
-  const tbody = actTable.querySelector('tbody');
-  tbody.innerHTML = '';
+loadTableRows(actTable, activities);
 
+selectEl.addEventListener('change', () => {
   // getting selected value
   const selectedCategory = selectEl.value;
+  if (!selectedCategory) {
+    loadTableRows(actTable, activities);
+    return;
+  }
 
   // finding matching activities
   const selectedActivities = activities.filter(
     (activity) => activity.category === selectedCategory
   );
 
-  // inserting activities into table
-  selectedActivities.forEach((activity) => {
-    const row = tbody.insertRow();
-
-    const cellCategory = row.insertCell();
-    cellCategory.innerHTML = activity.category;
-
-    const cellName = row.insertCell();
-    cellName.innerHTML = activity.name;
-
-    const cellDescription = row.insertCell();
-    cellDescription.innerHTML = activity.description;
-
-    const cellPrice = row.insertCell();
-    cellPrice.className = 'price';
-    cellPrice.innerHTML = `$ ${activity.price.toFixed(2)}`;
-  });
+  loadTableRows(actTable, selectedActivities);
 });
+
+function loadTableRows(table, activities) {
+  // getting reference to table body
+  clearTable(table);
+
+  // inserting activities into table
+  activities.forEach((activity) => {
+    writeTableRow(table, activity);
+  });
+}
+
+function clearTable(table) {
+  const tbody = table.querySelector('tbody');
+  tbody.innerHTML = '';
+}
+
+function writeTableRow(table, activity) {
+  const tbody = table.querySelector('tbody');
+  const row = tbody.insertRow();
+
+  const cellCategory = row.insertCell();
+  cellCategory.innerHTML = activity.category;
+
+  const cellName = row.insertCell();
+  cellName.innerHTML = activity.name;
+
+  const cellDescription = row.insertCell();
+  cellDescription.innerHTML = activity.description;
+
+  const cellPrice = row.insertCell();
+  cellPrice.className = 'price';
+  cellPrice.innerHTML = `$ ${activity.price.toFixed(2)}`;
+}

@@ -1,3 +1,9 @@
+/**
+ * This solution uses no helper functions, just puts all
+ * the filtering logic into the 'change' event handler of the
+ * select element
+ */
+
 'use strict';
 
 let categories = ['Adventures', 'Arts & Crafts', 'Museums', 'Wine Tastings', 'Other'];
